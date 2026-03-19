@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"money-backend/internal/model"
+	"money-backend/pkg/database"
 	"net/http"
 )
 
@@ -30,7 +30,12 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Data masuk ! Kategory %s, Nominal %.2f\n", input.Category, input.Nominal)
+	result := database.DB.Create(&input)
+
+	if result.Error != nil {
+		http.Error(w, "Gagal simpan ke database : "+result.Error.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

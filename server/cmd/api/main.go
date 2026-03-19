@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"money-backend/internal/handler"
+	"money-backend/pkg/database"
 	"net/http"
 )
 
@@ -11,6 +12,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	database.InitDB()
 	http.HandleFunc("/", helloHandler)
 	http.HandleFunc("/api/transactions", handler.CreateTransaction)
 
