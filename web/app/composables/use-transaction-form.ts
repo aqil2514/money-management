@@ -39,15 +39,33 @@ export const useTransactionForm = () => {
 
   // 4. Submit Handler
   async function onSubmit(event: FormSubmitEvent<Schema>) {
-    const payload = {
-      ...event.data,
-      date: transactionDate.value.toDate("UTC"),
-    };
-    toast.add({ title: "Tambah data sukses" });
-    console.log("Payload:", payload);
+    try {
+      const payload = {
+        ...event.data,
+        date: transactionDate.value.toDate("UTC"),
+      };
 
-    // Anda bisa tambahkan logic reset di sini
-    // Object.assign(state, { nominal: 0, note: '' })
+      const response = await $fetch("http://localhost:8000/api/transactions", {
+        method: "POST",
+        body: payload,
+      });
+
+      toast.add({
+        title: "Berhasil!",
+        description: "Data transaksi telah tersimpan di server Go.",
+        color: "success",
+      });
+
+      console.log("Respon dari Go:", response);
+    } catch (error: any) {
+      console.error(error);
+      toast.add({
+        title: "Gagal!",
+        description:
+          error.data?.message || "Tidak dapat terhubung ke server Go.",
+        color: "error",
+      });
+    }
   }
 
   return {
