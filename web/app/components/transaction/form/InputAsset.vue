@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const model = defineModel<string>()
-const items = ref(['Backlog', 'Todo', 'In Progress', 'Done'])
+defineProps<{
+  label: string,
+  name: string
+}>()
+const items = ref(['Tunai', 'Seabank', 'Kolega', 'Done'])
 
 function onCreate(item: string) {
   items.value.push(item)
@@ -10,7 +14,7 @@ function onCreate(item: string) {
 </script>
 
 <template>
-  <UFormField label="Dari Aset" name="from-asset">
+  <UFormField :label="label" :name="name">
     <USelectMenu v-model="model" create-item :items="items" class="w-full" @create="onCreate" />
   </UFormField>
 </template>

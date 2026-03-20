@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { CalendarDateTime } from '@internationalized/date';
-
-const model = defineModel<any>()
+import type { CalendarDate } from '@internationalized/date';
 
 
+const model = defineModel<CalendarDate>()
 
 const inputDate = useTemplateRef('inputDate')
 </script>

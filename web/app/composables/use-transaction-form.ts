@@ -1,50 +1,39 @@
 // composables/useTransactionForm.ts
 import * as z from "zod";
-import { CalendarDateTime } from "@internationalized/date";
+import { CalendarDate, getLocalTimeZone, Time } from "@internationalized/date";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import {
+  defaultTransaction,
+  type TransactionSchemaType,
+} from "~/schemas/transaction-schema";
 
 export const useTransactionForm = () => {
   const toast = useToast();
 
-  // 1. Schema
-  const schema = z.object({
-    nominal: z.number().min(1, "Nominal tidak boleh 0"),
-    category: z.string(),
-    assetName: z.string(),
-    note: z.string().optional(),
-  });
-
-  type Schema = z.output<typeof schema>;
-
-  // 2. State Tanggal (Shallow)
   const now = new Date();
-  const transactionDate = shallowRef(
-    new CalendarDateTime(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      now.getDate(),
-      now.getHours(),
-      now.getMinutes(),
-      now.getSeconds(),
-    ),
-  );
 
-  // 3. State Form
   const state = reactive({
-    nominal: 0,
-    category: "",
-    assetName: "",
-    note: "",
-  });
+    ...defaultTransaction,
+    time: new Time(now.getHours(), now.getMinutes()),
+  }) as TransactionSchemaType;
 
-  // 4. Submit Handler
-  async function onSubmit(event: FormSubmitEvent<Schema>) {
+  async function onSubmit(event: FormSubmitEvent<TransactionSchemaType>) {
+    const rawDate: CalendarDate = event.data.date;
+    const formattedDate = rawDate.toDate(getLocalTimeZone());
+
+    const rawTime: Time = event.data.time;
+    const formattedTime = rawTime.toString();
+
+    const payload = {
+      ...event.data,
+      date: formattedDate,
+      time: formattedTime,
+    };
+
+    console.log(payload);
+
+    return;
     try {
-      const payload = {
-        ...event.data,
-        date: transactionDate.value.toDate("UTC"),
-      };
-
       const response = await $fetch("http://localhost:8000/api/transactions", {
         method: "POST",
         body: payload,
@@ -69,9 +58,7 @@ export const useTransactionForm = () => {
   }
 
   return {
-    schema,
     state,
-    transactionDate,
     onSubmit,
   };
 };
