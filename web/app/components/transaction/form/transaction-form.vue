@@ -33,7 +33,7 @@ const { state, onSubmit } = useTransactionForm()
     <div class="grid gap-4"
       :class="{ 'grid-cols-2': state.type === 'transfer', 'grid-cols-1': state.type !== 'transfer' }">
       <InputAsset :name="'asset-from'" :label="'Dari Aset'" v-model="state.assetFrom" />
-      <InputAsset :name="'asset-to'" :label="'Ke Aset'" v-model="state.assetTo" />
+      <InputAsset v-if="state.type === 'transfer'" :name="'asset-to'" :label="'Ke Aset'" v-model="state.assetTo" />
       <InputIsHaveTransferFee v-if="state.type === 'transfer'" class="col-span-2" v-model="state.isHaveTransferFee" />
       <InputCurrency :name="'transfer-fee'" :label="'Biaya Transfer'" v-if="state.isHaveTransferFee"
         v-model="state.transferFee" />

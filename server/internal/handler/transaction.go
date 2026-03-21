@@ -1,45 +1,36 @@
 package handler
 
 import (
-	"encoding/json"
 	"money-backend/internal/model"
 	"money-backend/pkg/database"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func CreateTransaction(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // Izinkan Nuxt
-	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+func CreateTransaction(c *gin.Context) {
+	var payload model.Transaction
 
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Data tidak sesuai dengan yang diminta",
+			"error":   err.Error(),
+		})
 		return
 	}
 
-	if r.Method != http.MethodPost {
-		http.Error(w, "Hanya menerima POST method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var input model.Transaction
-
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, "Format json tidak diketahui : "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	result := database.DB.Create(&input)
+	result := database.DB.Create(&payload)
 
 	if result.Error != nil {
-		http.Error(w, "Gagal simpan ke database : "+result.Error.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Gagal menyimpan data ke database",
+			"error":   result.Error.Error(),
+		})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-
-	response := map[string]string{"message": "Transaksi berhasil diterima di server GO"}
-	json.NewEncoder(w).Encode(response)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Transaksi berhasil dibuat",
+		"data":    payload,
+	})
 }

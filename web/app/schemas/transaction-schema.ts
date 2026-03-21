@@ -28,14 +28,16 @@ const receivableSchema = z.object({
   creditor: z.string().optional(),
 });
 
-export const transactionSchema = z.object({
+const schema = z.object({
   ...baseSchema.shape,
   ...transferSchema.shape,
   ...payableSchema.shape,
   ...receivableSchema.shape,
 });
 
-export type TransactionSchemaType = z.output<typeof transactionSchema>;
+export const transactionSchema = schema;
+
+export type TransactionSchemaType = z.output<typeof schema>;
 
 const now = new Date();
 

@@ -19,22 +19,23 @@ export const useTransactionForm = () => {
 
   async function onSubmit(event: FormSubmitEvent<TransactionSchemaType>) {
     const rawDate: CalendarDate = event.data.date;
-    const formattedDate = rawDate.toDate(getLocalTimeZone());
-
     const rawTime: Time = event.data.time;
-    const formattedTime = rawTime.toString();
+
+    const createdDate = new Date(
+      rawDate.year,
+      rawDate.month,
+      rawDate.day,
+      rawTime.hour,
+      rawTime.minute,
+    );
 
     const payload = {
       ...event.data,
-      date: formattedDate,
-      time: formattedTime,
+      date: createdDate.toISOString(),
     };
 
-    console.log(payload);
-
-    return;
     try {
-      const response = await $fetch("http://localhost:8000/api/transactions", {
+      const response = await $fetch("http://localhost:8000/transactions", {
         method: "POST",
         body: payload,
       });
