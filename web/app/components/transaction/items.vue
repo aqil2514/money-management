@@ -1,14 +1,32 @@
 <script setup lang="ts">
-import { transactionItems } from '~/dummy/transaction-item';
+import { serverUrl } from '~/constants/server-url';
+import type { TransactionDb } from '~/types/transaction';
+import formatDateParts from '~/utils/formatter/format-date-parts';
+import formatToRupiah from '~/utils/formatter/format-to-rupiah';
+import mapTransactionDbToTransactionItems from '~/utils/mapper/map-transaction-db-to-transaction-items';
 
-const dummyData = ref(transactionItems)
+const { status, data } = useFetch<{ message: string, data: TransactionDb[] }>(`${serverUrl}/transactions`, {
+  key: "list-transactions"
+})
+
+const mappedData = computed(() => {
+  return data.value?.data.map(mapTransactionDbToTransactionItems) ?? []
+})
 
 const grouppedByDate = computed(() => {
-  const result = Object.groupBy(dummyData.value, ({ date }) => {
-    return date.split("T")[0]!
-  })
+  if (!mappedData.value) return {}
 
-  return result
+  return mappedData.value.reduce((acc, item) => {
+    const dateKey = item.date.split("T")[0]!
+
+    if (!acc[dateKey]) {
+      acc[dateKey] = []
+    }
+
+    acc[dateKey].push(item)
+
+    return acc
+  }, {} as Record<string, typeof mappedData.value>)
 })
 
 const transactionEntries = computed(() => Object.entries(grouppedByDate.value).sort().reverse())
@@ -38,7 +56,10 @@ const items = computed(() => {
 </script>
 
 <template>
-  <UAccordion :items="items" clas :ui="{
+  <div v-if="status === 'pending'">
+    <p>Loading...</p>
+  </div>
+  <UAccordion v-else :items="items" :ui="{
     root: 'space-y-4 mt-4',
     header: 'bg-white px-4 cursor-pointer flex ',
     content: 'bg-white p-4',
@@ -118,4 +139,5 @@ const items = computed(() => {
       </div>
     </template>
   </UAccordion>
+
 </template>

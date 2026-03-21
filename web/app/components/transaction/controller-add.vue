@@ -2,6 +2,9 @@
 import TransactionForm from './form/transaction-form.vue';
 
 const open = ref(false)
+
+const onSuccess = () => open.value = false
+
 </script>
 
 <template>
@@ -13,7 +16,7 @@ const open = ref(false)
     :description="'Isi form di bawah ini untuk menambah transaksi'">
 
     <template #body>
-      <TransactionForm />
+      <TransactionForm @success="onSuccess" />
     </template>
 
   </UModal>

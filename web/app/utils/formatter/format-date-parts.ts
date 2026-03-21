@@ -1,6 +1,7 @@
 import type { TransactionItemHeader } from "~/types/transaction";
 import { id } from "date-fns/locale";
 import { format } from "date-fns";
+import formatToRupiah from "./format-to-rupiah";
 
 export default (header: TransactionItemHeader) => {
   const dateObj = new Date(header.date);

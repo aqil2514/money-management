@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { transactionSchema } from "~/schemas/transaction-schema";
+import { transactionSchema, type TransactionSchemaType } from "~/schemas/transaction-schema";
 import InputCategory from "./InputCategory.vue";
 import InputDate from "./InputDate.vue"
 import InputSubCategory from "./InputSubCategory.vue";
@@ -11,12 +11,25 @@ import InputNote from "./InputNote.vue";
 import InputIsHaveTransferFee from "./InputIsHaveTransferFee.vue";
 import InputCurrency from "./InputCurrency.vue";
 import InputAsset from "./InputAsset.vue";
-const { state, onSubmit } = useTransactionForm()
+import type { FormSubmitEvent } from "@nuxt/ui";
+const { state, onSubmit, isLoading } = useTransactionForm()
+
+const emits = defineEmits(['success'])
+const submitHandler = async (event: FormSubmitEvent<TransactionSchemaType>) => {
+
+  try {
+    await onSubmit(event);
+    emits("success")
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 </script>
 
 <template>
-  <UForm :schema="transactionSchema" :state="state" @submit="onSubmit" class="space-y-4">
+  <UForm :schema="transactionSchema" :state="state" @submit="submitHandler" class="space-y-4">
     <InputTransactionType v-model="state.type" />
     <div class="grid grid-cols-2 gap-4">
       <InputDate v-model="state.date" />
@@ -50,6 +63,6 @@ const { state, onSubmit } = useTransactionForm()
       <UTextarea v-model="state.description" :maxrows="4" autoresize class="w-full" />
     </UFormField>
 
-    <UButton type="submit" label="Simpan" block />
+    <UButton type="submit" label="Simpan" :loading="isLoading" :disabled="isLoading" block />
   </UForm>
 </template>

@@ -1,14 +1,14 @@
-// composables/useTransactionForm.ts
-import * as z from "zod";
-import { CalendarDate, getLocalTimeZone, Time } from "@internationalized/date";
+import { CalendarDate, Time } from "@internationalized/date";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import {
   defaultTransaction,
   type TransactionSchemaType,
 } from "~/schemas/transaction-schema";
+import { serverUrl } from "~/constants/server-url";
 
 export const useTransactionForm = () => {
   const toast = useToast();
+  const isLoading = ref(false);
 
   const now = new Date();
 
@@ -35,18 +35,19 @@ export const useTransactionForm = () => {
     };
 
     try {
-      const response = await $fetch("http://localhost:8000/transactions", {
+      isLoading.value = true;
+      await $fetch(`${serverUrl}/transactions`, {
         method: "POST",
         body: payload,
       });
+
+      await refreshNuxtData("list-transactions");
 
       toast.add({
         title: "Berhasil!",
         description: "Data transaksi telah tersimpan di server Go.",
         color: "success",
       });
-
-      console.log("Respon dari Go:", response);
     } catch (error: any) {
       console.error(error);
       toast.add({
@@ -55,11 +56,14 @@ export const useTransactionForm = () => {
           error.data?.message || "Tidak dapat terhubung ke server Go.",
         color: "error",
       });
+    } finally {
+      isLoading.value = false;
     }
   }
 
   return {
     state,
     onSubmit,
+    isLoading,
   };
 };

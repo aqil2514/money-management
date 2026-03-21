@@ -10,7 +10,7 @@ function onCreate(item: string) {
 </script>
 
 <template>
-  <UFormField label="Dari Aset" name="from-asset">
+  <UFormField label="Kategori" name="from-asset">
     <USelectMenu v-model="model" create-item :items="items" class="w-full" @create="onCreate" />
   </UFormField>
 </template>

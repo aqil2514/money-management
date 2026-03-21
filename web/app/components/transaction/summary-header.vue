@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import formatToRupiah from '~/utils/formatter/format-to-rupiah';
+
 const summaries = [
   { label: "Pendapatan", nominal: 3000000, color: '#3b82f6' },
   { label: "Pengeluaran", nominal: 3000000, color: '#ef4444' },

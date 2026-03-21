@@ -5,6 +5,26 @@ export type TransactionType =
   | "payable"
   | "receivable";
 
+export interface TransactionDb {
+  assetFrom: string;
+  assetTo: string;
+  category: string;
+  createdAt: string;
+  creditor: string;
+  date: string;
+  debtor: string;
+  description: string;
+  feeFromAsset: string;
+  id: string;
+  isHaveTransferFee: boolean;
+  nominal: number;
+  note: string;
+  subCategory: string;
+  transferFee: number;
+  type: TransactionType;
+  updatedAt: string;
+}
+
 export interface TransactionSummary {
   label: string;
   nominal: number;
@@ -19,7 +39,7 @@ export interface TransactionItemHeader {
 
 export interface TransactionItemBody {
   category: string;
-  date: string; // Ini untuk per item
+  date: string;
   nominal: number;
   subCategory?: string;
   note: string;

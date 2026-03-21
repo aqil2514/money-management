@@ -12,4 +12,5 @@ func SetupRoute(r *gin.Engine) {
 	transactionGroup := api.Group("/transactions")
 
 	transactionGroup.POST("", handler.CreateTransaction)
+	transactionGroup.GET("", handler.GetTransactions)
 }
