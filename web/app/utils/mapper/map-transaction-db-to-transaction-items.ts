@@ -4,6 +4,8 @@ export default (data: TransactionDb | undefined): TransactionItemBody => {
   if (!data) throw new Error("Data tidak ditemukan");
 
   switch (data.type) {
+    case "transfer":
+      return transferCase(data);
     default:
       return normalCase(data);
   }
@@ -18,4 +20,9 @@ const normalCase = (data: TransactionDb): TransactionItemBody => ({
   type: data.type,
   description: data.description,
   subCategory: data.subCategory,
+});
+
+const transferCase = (data: TransactionDb): TransactionItemBody => ({
+  ...normalCase(data),
+  asetName: `${data.assetFrom} => ${data.assetTo}`,
 });

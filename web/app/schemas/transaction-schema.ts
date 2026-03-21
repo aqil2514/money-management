@@ -1,5 +1,5 @@
 import { CalendarDate, Time } from "@internationalized/date";
-import z from "zod";
+import z, { core } from "zod";
 
 const baseSchema = z.object({
   date: z.instanceof(CalendarDate),
@@ -35,7 +35,37 @@ const schema = z.object({
   ...receivableSchema.shape,
 });
 
-export const transactionSchema = schema;
+const transferRefine = (
+  value: TransactionSchemaType,
+  ctx: core.$RefinementCtx<TransactionSchemaType>,
+) => {
+  const { assetTo, isHaveTransferFee, feeFromAsset, transferFee } = value;
+  if (!assetTo)
+    ctx.addIssue({
+      code: "custom",
+      message: "Aset tujuan wajib disertakan",
+      path: ["assetTo"],
+    });
+
+  if (isHaveTransferFee && !feeFromAsset)
+    ctx.addIssue({
+      code: "custom",
+      message: "Uang keluar aset wajib diisi",
+      path: ["feeFromAsset"],
+    });
+
+  if (isHaveTransferFee && (!transferFee || transferFee <= 0)) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Biaya transfer harus lebih dari 0",
+      path: ["transferFee"],
+    });
+  }
+};
+
+export const transactionSchema = schema.superRefine((value, ctx) => {
+  if (value.type === "transfer") transferRefine(value, ctx);
+});
 
 export type TransactionSchemaType = z.output<typeof schema>;
 
