@@ -2,9 +2,16 @@
 import type { DropdownMenuItem } from '@nuxt/ui';
 import type { CategoryDb } from '~/types/category';
 import EditController from '~/components/category/controller/edit.vue'
+import DeleteController from '~/components/category/controller/delete.vue'
 
 const props = defineProps<{ categoryItems: CategoryDb[] }>()
 const selectedData = ref<CategoryDb | null>(null)
+const selectedModal = ref<"edit" | "delete" | "detail" | null>(null)
+
+const openModal = (item: CategoryDb, type: "edit" | "delete") => {
+  selectedData.value = item
+  selectedModal.value = type
+}
 
 const getDropdownItems = (item: CategoryDb): DropdownMenuItem[][] => ([
   [
@@ -16,7 +23,11 @@ const getDropdownItems = (item: CategoryDb): DropdownMenuItem[][] => ([
   [
     {
       label: "Edit",
-      onSelect: () => selectedData.value = item
+      onSelect: () => openModal(item, 'edit')
+    },
+    {
+      label: "Delete",
+      onSelect: () => openModal(item, 'delete')
     }
   ]
 ])
@@ -46,5 +57,8 @@ const getDropdownItems = (item: CategoryDb): DropdownMenuItem[][] => ([
     </UCard>
   </div>
 
-  <EditController :data="selectedData" @close="() => selectedData = null" />
+  <EditController v-if="selectedModal === 'edit'" :data="selectedData"
+    @close="() => { selectedData = null; selectedModal = null }" />
+  <DeleteController v-if="selectedModal === 'delete'" :data="selectedData"
+    @close="() => { selectedData = null; selectedModal = null }" />
 </template>

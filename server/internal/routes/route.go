@@ -17,5 +17,6 @@ func SetupRoute(r *gin.Engine) {
 	categoryGroup.GET("", handler.GetCategory)
 	categoryGroup.GET("/parents", handler.GetParentCategory)
 	categoryGroup.POST("", handler.CreateCategory)
+	categoryGroup.DELETE("/:id", handler.SoftDeleteCategory)
 	categoryGroup.PUT("/:id", handler.EditCategory)
 }

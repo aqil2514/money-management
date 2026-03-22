@@ -8,14 +8,14 @@ import { serverUrl } from '~/constants/server-url';
 const props = defineProps<{ data: CategoryDb | null }>()
 const emit = defineEmits(['close'])
 
-const isOpen = ref(false)
+const isOpen = ref(true)
 const isLoading = ref(false)
 const toast = useToast()
 
 watch(() => props.data, (newVal) => {
   if (newVal) {
     isOpen.value = true
-  }
+  } else isOpen.value = false
 })
 
 const handleUpdateOpen = (open: boolean) => {

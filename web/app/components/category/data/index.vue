@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from '@nuxt/ui';
 import { serverUrl } from '~/constants/server-url';
 import type { CategoryDb } from '~/types/category';
 import Card from './card.vue';
