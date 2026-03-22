@@ -5,7 +5,6 @@ import ControllerAdd from './controller-add.vue';
 
 <template>
   <div class="flex justify-end gap-4">
-
     <ControllerAdd />
   </div>
 </template>

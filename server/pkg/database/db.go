@@ -29,5 +29,5 @@ func InitDB() {
 
 	fmt.Printf("Database terkoneksi\n")
 
-	DB.AutoMigrate(&model.Transaction{})
+	DB.AutoMigrate(&model.Transaction{}, &model.Category{})
 }

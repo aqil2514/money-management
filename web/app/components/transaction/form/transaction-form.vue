@@ -39,8 +39,8 @@ const submitHandler = async (event: FormSubmitEvent<TransactionSchemaType>) => {
     <InputCurrency :name="'nominal'" :label="'Nominal'" v-model="state.nominal" />
 
     <div class="grid grid-cols-2 gap-4">
-      <InputCategory v-model="state.category" />
-      <InputSubCategory v-model="state.subCategory" />
+      <InputCategory v-model="state.categoryId" />
+      <InputSubCategory v-model="state.subCategoryId" />
     </div>
 
     <div class="grid gap-4"

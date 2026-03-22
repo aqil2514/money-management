@@ -11,4 +11,9 @@ export const NAVIGATION_ITEMS = ref<NavigationMenuItem[]>([
     icon: "i-lucide-coins",
     to: "/transaction",
   },
+  {
+    label: "Kategori",
+    icon: "i-lucide-folder",
+    to: "/category",
+  },
 ]);
