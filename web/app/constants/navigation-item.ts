@@ -9,11 +9,22 @@ export const NAVIGATION_ITEMS = ref<NavigationMenuItem[]>([
   {
     label: "Transaksi",
     icon: "i-lucide-coins",
-    to: "/transaction",
-  },
-  {
-    label: "Kategori",
-    icon: "i-lucide-folder",
-    to: "/category",
+    children: [
+      {
+        label: "Alur Kas",
+        icon: "i-lucide-chart-no-axes-combined",
+        to: "/transaction",
+      },
+      {
+        label: "Kategori",
+        icon: "i-lucide-cassette-tape",
+        to: "/category",
+      },
+      {
+        label: "Aset",
+        icon: "i-lucide-database",
+        to: "/asset",
+      },
+    ],
   },
 ]);

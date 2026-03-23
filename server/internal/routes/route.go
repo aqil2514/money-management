@@ -19,4 +19,9 @@ func SetupRoute(r *gin.Engine) {
 	categoryGroup.POST("", handler.CreateCategory)
 	categoryGroup.DELETE("/:id", handler.SoftDeleteCategory)
 	categoryGroup.PUT("/:id", handler.EditCategory)
+
+	assetGroup := api.Group("/asset")
+	assetGroup.POST("", handler.CreateNewAsset)
+	assetGroup.GET("", handler.GetAsset)
+	assetGroup.PUT("/:id", handler.UpdateAsset)
 }
