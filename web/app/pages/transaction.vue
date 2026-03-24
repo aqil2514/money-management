@@ -4,6 +4,8 @@ import Items from '~/components/transaction/items.vue';
 import SummaryHeader from '~/components/transaction/summary-header.vue';
 import { transactionProviderKey } from '~/types/injectKey';
 
+import DetailDialog from '~/components/transaction/dialogs/detail.vue'
+
 useSeoMeta({
   title: "Transaksi"
 })
@@ -24,4 +26,6 @@ provide(transactionProviderKey, {
     <Controller />
     <Items />
   </div>
+
+  <DetailDialog />
 </template>

@@ -105,7 +105,8 @@ const items = computed(() => {
 
     <template #content="{ item: { body } }">
       <div class="bg-gray-50/30 divide-y divide-gray-100">
-        <div v-for="(trx, index) in body" :key="index"
+        <div v-for="(trx, index) in body" :key="index" role="button"
+          @click="injectedState?.modal.updateModalOpen('detail', trx.id)"
           class="grid grid-cols-3 gap-4 p-4 items-center hover:bg-white transition-colors cursor-pointer group">
           <div class="flex flex-col">
             <span class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">

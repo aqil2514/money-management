@@ -41,6 +41,7 @@ export interface TransactionItemHeader {
 }
 
 export interface TransactionItemBody {
+  id: string;
   category: string;
   date: string;
   nominal: number;

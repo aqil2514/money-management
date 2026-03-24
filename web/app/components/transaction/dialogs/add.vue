@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { transactionProviderKey } from '~/types/injectKey';
-import TransactionForm from './form/transaction-form.vue';
 import type { TransactionRequestPayload } from '~/schemas/transaction-schema';
 import { serverUrl } from '~/constants/server-url';
+import TransactionForm from '../form/transaction-form.vue';
 
 const injectedData = inject(transactionProviderKey)
 const toast = useToast()

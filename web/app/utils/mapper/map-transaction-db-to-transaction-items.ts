@@ -12,6 +12,7 @@ export default (data: TransactionDb | undefined): TransactionItemBody => {
 };
 
 const normalCase = (data: TransactionDb): TransactionItemBody => ({
+  id: data.id,
   asetName: `${data.assetFrom} (${data.assetFromCategory})`,
   category: data.category,
   date: data.date,

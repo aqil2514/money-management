@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ControllerAdd from './controller-add.vue';
+import ControllerAdd from './dialogs/add.vue';
 
 </script>
 
