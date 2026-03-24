@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import type { ContextMenuItem } from '@nuxt/ui';
 import { transactionProviderKey } from '~/types/injectKey';
+import type { TransactionItemBody } from '~/types/transaction';
 import formatDateParts from '~/utils/formatter/format-date-parts';
 import formatToRupiah from '~/utils/formatter/format-to-rupiah';
 import mapTransactionDbToTransactionItems from '~/utils/mapper/map-transaction-db-to-transaction-items';
@@ -52,6 +54,19 @@ const items = computed(() => {
     }
   })
 })
+
+const getContextMenu = (item: TransactionItemBody): ContextMenuItem[] => [
+  {
+    label: "Detail",
+    icon: "i-lucide-eye",
+    onSelect: () => injectedState?.modal.updateModalOpen('detail', item.id)
+  },
+  {
+    label: "Edit",
+    icon: "i-lucide-pen",
+    onSelect: () => injectedState?.modal.updateModalOpen('edit', item.id)
+  },
+]
 
 </script>
 
@@ -108,34 +123,37 @@ const items = computed(() => {
         <div v-for="(trx, index) in body" :key="index" role="button"
           @click="injectedState?.modal.updateModalOpen('detail', trx.id)"
           class="grid grid-cols-3 gap-4 p-4 items-center hover:bg-white transition-colors cursor-pointer group">
-          <div class="flex flex-col">
-            <span class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">
-              {{ trx.category }}
-            </span>
-            <span class="text-[10px] uppercase tracking-wider text-gray-400 font-medium">
-              {{ trx.subCategory }}
-            </span>
-          </div>
 
-          <div class="flex flex-col items-center text-center">
-            <p class="text-sm text-gray-600 line-clamp-1 italic font-medium">
-              "{{ trx.note || '-' }}"
-            </p>
-            <div class="flex items-center gap-1 mt-1 px-2 py-0.5 bg-gray-100 rounded-md">
-              <UIcon name="i-heroicons-wallet" class="w-3 h-3 text-gray-500" />
-              <span class="text-[10px] text-gray-500 font-bold uppercase">{{ trx.asetName }}</span>
+          <UContextMenu :items="getContextMenu(trx)">
+            <div class="flex flex-col">
+              <span class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">
+                {{ trx.category }}
+              </span>
+              <span class="text-[10px] uppercase tracking-wider text-gray-400 font-medium">
+                {{ trx.subCategory }}
+              </span>
             </div>
-          </div>
 
-          <div class="flex flex-col items-end">
-            <p class="text-sm font-black tracking-tight"
-              :class="trx.type === 'income' ? 'text-blue-600' : 'text-red-600'">
-              {{ trx.type === 'income' ? '+' : '-' }} {{ formatToRupiah(trx.nominal) }}
-            </p>
-            <p class="text-[10px] text-gray-400 mt-1 font-mono">
-              {{ trx.date?.split('T')[1]?.substring(0, 5) || '00:00' }}
-            </p>
-          </div>
+            <div class="flex flex-col items-center text-center">
+              <p class="text-sm text-gray-600 line-clamp-1 italic font-medium">
+                "{{ trx.note || '-' }}"
+              </p>
+              <div class="flex items-center gap-1 mt-1 px-2 py-0.5 bg-gray-100 rounded-md">
+                <UIcon name="i-heroicons-wallet" class="w-3 h-3 text-gray-500" />
+                <span class="text-[10px] text-gray-500 font-bold uppercase">{{ trx.asetName }}</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-end">
+              <p class="text-sm font-black tracking-tight"
+                :class="trx.type === 'income' ? 'text-blue-600' : 'text-red-600'">
+                {{ trx.type === 'income' ? '+' : '-' }} {{ formatToRupiah(trx.nominal) }}
+              </p>
+              <p class="text-[10px] text-gray-400 mt-1 font-mono">
+                {{ trx.date?.split('T')[1]?.substring(0, 5) || '00:00' }}
+              </p>
+            </div>
+          </UContextMenu>
         </div>
       </div>
     </template>

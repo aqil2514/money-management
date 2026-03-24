@@ -40,7 +40,8 @@ const getTypeColor = (type: string) => {
 </script>
 
 <template>
-  <UModal v-model:open="open" :title="internalData ? `Detail: ${internalData.note}` : 'Transaksi tidak ditemukan'">
+  <UModal v-model:open="open" :title="internalData ? `Detail: ${internalData.note}` : 'Transaksi tidak ditemukan'"
+    description="Detail transaksi">
     <template v-if="!internalData" #body>
       <div class="flex flex-col items-center justify-center py-10 text-gray-500">
         <UIcon name="i-heroicons-exclamation-circle" class="w-12 h-12 mb-2" />
@@ -73,7 +74,7 @@ const getTypeColor = (type: string) => {
               <UIcon name="i-heroicons-tag" class="text-primary" />
               <span class="text-sm">{{ internalData.category }}</span>
               <span v-if="internalData.subCategory" class="text-xs text-gray-400">/ {{ internalData.subCategory
-                }}</span>
+              }}</span>
             </div>
           </div>
 

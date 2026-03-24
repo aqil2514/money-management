@@ -48,8 +48,6 @@ const defaultValues = computed<TransactionSchemaType | undefined>(() => {
   const data = internalData.value;
   const d = new Date(data.date);
 
-  console.log(data)
-
   return {
     type: data.type,
     nominal: data.nominal,
