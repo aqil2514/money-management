@@ -5,19 +5,19 @@ const baseSchema = z.object({
   date: z.instanceof(CalendarDate),
   time: z.instanceof(Time),
   type: z.enum(["expense", "income", "transfer", "payable", "receivable"]),
-  nominal: z.number().min(1, "Nominal tidak boleh 0"),
-  categoryId: z.string(),
-  subCategoryId: z.string().optional(),
-  assetFrom: z.string(),
-  note: z.string(),
+  nominal: z.number().min(1, "Nominal harus lebih dari 0"),
+  categoryId: z.string().min(1, "Kategori wajib diisi"),
+  subCategoryId: z.string().nullish(),
+  assetFromId: z.number().min(1, "Aset asal wajib diisi"),
+  note: z.string().min(1, "Catatan wajib diisi"),
   description: z.string().optional(),
 });
 
 const transferSchema = z.object({
-  assetTo: z.string().optional(),
-  isHaveTransferFee: z.boolean().optional(),
+  assetToId: z.number().optional(),
+  isHaveTransferFee: z.boolean().default(false),
   transferFee: z.number().optional(),
-  feeFromAsset: z.string().optional(),
+  feeFromAssetId: z.number().optional(),
 });
 
 const payableSchema = z.object({
@@ -39,15 +39,15 @@ const transferRefine = (
   value: TransactionSchemaType,
   ctx: core.$RefinementCtx<TransactionSchemaType>,
 ) => {
-  const { assetTo, isHaveTransferFee, feeFromAsset, transferFee } = value;
-  if (!assetTo)
+  const { assetToId, isHaveTransferFee, feeFromAssetId, transferFee } = value;
+  if (!assetToId)
     ctx.addIssue({
       code: "custom",
       message: "Aset tujuan wajib disertakan",
       path: ["assetTo"],
     });
 
-  if (isHaveTransferFee && !feeFromAsset)
+  if (isHaveTransferFee && !feeFromAssetId)
     ctx.addIssue({
       code: "custom",
       message: "Uang keluar aset wajib diisi",
@@ -68,6 +68,10 @@ export const transactionSchema = schema.superRefine((value, ctx) => {
 });
 
 export type TransactionSchemaType = z.output<typeof schema>;
+export type TransactionRequestPayload = Omit<TransactionSchemaType, "date"> & {
+  date: string;
+};
+export type TransactionSchemaTypeKey = keyof TransactionSchemaType;
 
 const now = new Date();
 
@@ -78,16 +82,16 @@ export const defaultTransaction: TransactionSchemaType = {
   time: markRaw(new Time(now.getHours(), now.getMinutes())),
   type: "expense",
   nominal: 0,
-  categoryId: "",
-  subCategoryId: undefined,
+  categoryId: "a06ea59c-510c-4358-b179-ff4a28f58d4a",
+  subCategoryId: "no-subcategory",
   note: "",
   description: "",
 
-  assetFrom: "Tunai",
-  assetTo: undefined,
+  assetFromId: 1,
+  assetToId: undefined,
   debtor: undefined,
   creditor: undefined,
-  isHaveTransferFee: undefined,
+  isHaveTransferFee: false,
   transferFee: undefined,
-  feeFromAsset: undefined,
+  feeFromAssetId: undefined,
 };

@@ -4,6 +4,7 @@ import (
 	"money-backend/internal/model"
 	"money-backend/pkg/database"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,6 +50,23 @@ func GetAsset(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Data berhasil diambil",
 		"data":    assets,
+	})
+}
+
+func SoftDeleteAsset(c *gin.Context) {
+	id := c.Param("id")
+
+	result := database.DB.Model(&model.Asset{}).Where("id = ?", id).Update("deleted_at", time.Now())
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Aset gagal dihapus",
+			"error":   result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Data aset berhasil dihapus",
 	})
 }
 

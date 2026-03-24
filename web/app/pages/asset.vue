@@ -7,6 +7,7 @@ import { assetProvideKey } from "~/types/injectKey";
 // DIALOGS
 import AddAssetDialog from "~/components/asset/dialogs/add.vue"
 import EditAssetDialog from "~/components/asset/dialogs/edit.vue"
+import DeleteAssetDialog from "~/components/asset/dialogs/delete.vue"
 
 useSeoMeta({
   title: "Aset"
@@ -41,4 +42,5 @@ provide(assetProvideKey, {
   <!-- DIALOGS -->
   <AddAssetDialog />
   <EditAssetDialog />
+  <DeleteAssetDialog />
 </template>

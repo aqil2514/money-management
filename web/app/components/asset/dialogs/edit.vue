@@ -51,7 +51,7 @@ const editHandler = async (values: AssetSchemaType) => {
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" title="Tambah Aset" description="Isi data dibawah ini untuk meambahkan aset baru">
+  <UModal v-model:open="isOpen" title="Edit Aset" description="Isi data dibawah ini untuk meambahkan aset baru">
     <template #body>
       <AssetForms :submit-handler="editHandler" :default-values="selectedData" />
     </template>

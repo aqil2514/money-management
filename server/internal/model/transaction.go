@@ -22,13 +22,16 @@ type Transaction struct {
 	Category    Category `gorm:"foreignKey:CategoryID" json:"category"`
 	SubCategory Category `gorm:"foreignKey:SubCategoryID" json:"subCategory"`
 
-	AssetFrom         string  `json:"assetFrom" validate:"required"`
+	AssetFromID       uint    `gorm:"not null" json:"assetFromId" validate:"required"`
+	AssetFrom         Asset   `gorm:"foreignKey:AssetFromID" json:"assetFrom"`
 	Note              string  `json:"note" validate:"required"`
 	Description       *string `json:"description"`
-	AssetTo           *string `json:"assetTo" validate:"required_if=Type transfer"`
+	AssetToID         *uint   `json:"assetToId" validate:"required_if=Type transfer"`
+	AssetTo           *Asset  `gorm:"foreignKey:AssetToID" json:"assetTo"`
 	IsHaveTransferFee bool    `json:"isHaveTransferFee"`
 	TransferFee       float64 `json:"transferFee" validate:"required_if=IsHaveTransferFee true"`
-	FeeFromAsset      *string `json:"feeFromAsset" validate:"required_if=IsHaveTransferFee true"`
+	FeeFromAssetID    *uint   `json:"feeFromAssetId" validate:"required_if=IsHaveTransferFee true"`
+	FeeFromAsset      *Asset  `gorm:"foreignKey:FeeFromAssetID" json:"feeFromAsset"`
 	Debtor            *string `json:"debtor" validate:"required_if=Type payable"`
 	Creditor          *string `json:"creditor" validate:"required_if=Type receivable"`
 }

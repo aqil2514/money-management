@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"money-backend/internal/model"
 	"money-backend/pkg/database"
 	"net/http"
@@ -107,8 +106,6 @@ func GetParentCategory(c *gin.Context) {
 
 func SoftDeleteCategory(c *gin.Context) {
 	id := c.Param("id")
-
-	fmt.Print(id)
 
 	result := database.DB.Model(&model.Category{}).Where("id = ?", id).Update("deleted_at", time.Now().UTC().Format(time.RFC3339))
 	if result.Error != nil {

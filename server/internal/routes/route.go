@@ -24,4 +24,5 @@ func SetupRoute(r *gin.Engine) {
 	assetGroup.POST("", handler.CreateNewAsset)
 	assetGroup.GET("", handler.GetAsset)
 	assetGroup.PUT("/:id", handler.UpdateAsset)
+	assetGroup.DELETE("/:id", handler.SoftDeleteAsset)
 }

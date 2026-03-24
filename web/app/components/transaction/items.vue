@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { serverUrl } from '~/constants/server-url';
-import type { TransactionDb } from '~/types/transaction';
+import { transactionProviderKey } from '~/types/injectKey';
 import formatDateParts from '~/utils/formatter/format-date-parts';
 import formatToRupiah from '~/utils/formatter/format-to-rupiah';
 import mapTransactionDbToTransactionItems from '~/utils/mapper/map-transaction-db-to-transaction-items';
 
-const { status, data } = useFetch<{ message: string, data: TransactionDb[] }>(`${serverUrl}/transactions`, {
-  key: "list-transactions"
-})
+
+const injectedState = inject(transactionProviderKey);
+const data = computed(() => injectedState?.fetcher.data.value?.data ?? [])
+const status = computed(() => injectedState?.fetcher.status.value ?? "pending")
 
 const mappedData = computed(() => {
-  return data.value?.data.map(mapTransactionDbToTransactionItems) ?? []
+  return data.value.map(mapTransactionDbToTransactionItems) ?? []
 })
 
 const grouppedByDate = computed(() => {

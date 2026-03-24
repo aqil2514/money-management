@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { DropdownMenuItem } from '@nuxt/ui';
+import type { AssetsDb } from '~/types/asset';
 import { assetProvideKey } from '~/types/injectKey';
 
 const injectedData = inject(assetProvideKey)
@@ -6,7 +8,6 @@ const assetItems = computed(() => injectedData?.fetcher.data.value?.data ?? [])
 const isLoading = computed(() => injectedData?.fetcher.status.value === 'pending')
 const liquidityMapping = injectedData?.constant.liquidityScoreMapping
 
-// Helper untuk format angka ke Rupiah/Dollar
 const formatAmount = (amount: string, currency: string) => {
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -14,6 +15,25 @@ const formatAmount = (amount: string, currency: string) => {
     maximumFractionDigits: 0
   }).format(parseFloat(amount))
 }
+
+const getDropdownItems = (item: AssetsDb): DropdownMenuItem[][] => ([
+  [
+    {
+      label: item.name,
+      type: "label"
+    }
+  ],
+  [
+    {
+      label: "Edit",
+      onSelect: () => injectedData?.updateModalOpen('edit', item.ID)
+    },
+    {
+      label: "Delete",
+      onSelect: () => injectedData?.updateModalOpen('delete', item.ID)
+    }
+  ]
+])
 </script>
 
 <template>
@@ -29,6 +49,13 @@ const formatAmount = (amount: string, currency: string) => {
   <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <UCard v-for="item in assetItems" :key="item.ID" class="flex flex-col">
       <template #header>
+        <div class="flex justify-end mb-4">
+          <UDropdownMenu :items="getDropdownItems(item)" :ui="{
+            content: 'w-48'
+          }">
+            <UButton icon="i-lucide-menu" color="neutral" variant="outline" class="cursor-pointer" />
+          </UDropdownMenu>
+        </div>
         <div class="flex justify-between items-start mb-2">
           <div>
             <p class="text-lg font-bold leading-tight">{{ item.name }}</p>
@@ -64,14 +91,6 @@ const formatAmount = (amount: string, currency: string) => {
           :description="liquidityMapping?.[item.liquidityScore] || 'Skor tidak diketahui'" />
       </div>
 
-      <template #footer>
-        <div class="flex justify-end gap-2">
-          <UButton icon="i-heroicons-pencil-square" color="neutral" variant="ghost" size="sm"
-            @click="injectedData?.updateModalOpen('edit', item.ID)" />
-          <UButton icon="i-heroicons-trash" color="error" variant="ghost" size="sm"
-            @click="injectedData?.updateModalOpen('delete')" />
-        </div>
-      </template>
     </UCard>
   </div>
 </template>

@@ -1,9 +1,32 @@
 <script setup lang="ts">
+import { transactionProviderKey } from '~/types/injectKey';
 import TransactionForm from './form/transaction-form.vue';
+import type { TransactionRequestPayload } from '~/schemas/transaction-schema';
+import { serverUrl } from '~/constants/server-url';
 
-const open = ref(false)
+const injectedData = inject(transactionProviderKey)
+const toast = useToast()
 
-const onSuccess = () => open.value = false
+const open = computed({
+  get: () => injectedData?.modal.modalOpen.value === 'add',
+  set: (value) => {
+    injectedData?.modal.updateModalOpen(value ? 'add' : null)
+  }
+})
+
+const addHandler = async (values: TransactionRequestPayload) => {
+  await $fetch(`${serverUrl}/transactions`, {
+    method: "POST",
+    body: values
+  })
+
+  toast.add({
+    title: "Berhasil",
+    description: "Data transaksi berhasil ditambah"
+  })
+  injectedData?.modal.updateModalOpen(null);
+  await refreshNuxtData("transaction")
+}
 
 </script>
 
@@ -16,7 +39,7 @@ const onSuccess = () => open.value = false
     :description="'Isi form di bawah ini untuk menambah transaksi'">
 
     <template #body>
-      <TransactionForm @success="onSuccess" />
+      <TransactionForm v-on:submit="addHandler" />
     </template>
 
   </UModal>

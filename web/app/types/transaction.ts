@@ -28,7 +28,7 @@ export interface TransactionDb {
 export interface TransactionSummary {
   label: string;
   nominal: number;
-  textClass: string;
+  color: string;
 }
 
 export interface TransactionItemHeader {
