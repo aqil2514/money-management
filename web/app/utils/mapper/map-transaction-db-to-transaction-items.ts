@@ -12,7 +12,7 @@ export default (data: TransactionDb | undefined): TransactionItemBody => {
 };
 
 const normalCase = (data: TransactionDb): TransactionItemBody => ({
-  asetName: data.assetFrom,
+  asetName: `${data.assetFrom} (${data.assetFromCategory})`,
   category: data.category,
   date: data.date,
   nominal: data.nominal,
@@ -24,5 +24,6 @@ const normalCase = (data: TransactionDb): TransactionItemBody => ({
 
 const transferCase = (data: TransactionDb): TransactionItemBody => ({
   ...normalCase(data),
-  asetName: `${data.assetFrom} => ${data.assetTo}`,
+  asetName: `${data.assetFrom} (${data.assetFromCategory}) => ${data.assetTo} (${data.assetToCategory})`,
+  nominal: data.nominal + data.transferFee,
 });

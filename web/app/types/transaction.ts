@@ -7,7 +7,9 @@ export type TransactionType =
 
 export interface TransactionDb {
   assetFrom: string;
+  assetFromCategory: string;
   assetTo: string;
+  assetToCategory: string;
   category: string;
   createdAt: string;
   creditor: string;
@@ -15,6 +17,7 @@ export interface TransactionDb {
   debtor: string;
   description: string;
   feeFromAsset: string;
+  feeFromAssetCategory: string;
   id: string;
   isHaveTransferFee: boolean;
   nominal: number;

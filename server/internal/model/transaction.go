@@ -7,6 +7,16 @@ import (
 	"gorm.io/gorm"
 )
 
+type TransactionType string
+
+const (
+	Expense    TransactionType = "expense"
+	Income     TransactionType = "income"
+	Transfer   TransactionType = "transfer"
+	Payable    TransactionType = "payable"
+	Receivable TransactionType = "receivable"
+)
+
 type Transaction struct {
 	ID        uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
@@ -42,4 +52,31 @@ func (t *Transaction) BeforeCreate(tx *gorm.DB) (err error) {
 	}
 
 	return
+}
+
+type TransactionFE struct {
+	ID          uuid.UUID `json:"id"`
+	Date        time.Time `json:"date"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	Type        string    `json:"type"`
+	Nominal     float64   `json:"nominal"`
+	Note        string    `json:"note"`
+	Description string    `json:"description"`
+
+	// Mapping Relasi ke String (Nama)
+	Category          string `json:"category"`
+	SubCategory       string `json:"subCategory"`
+	AssetFrom         string `json:"assetFrom"`
+	AssetFromCategory string `json:"assetFromCategory"`
+	AssetTo           string `json:"assetTo"`
+	AssetToCategory   string `json:"assetToCategory"`
+
+	// Field Tambahan
+	IsHaveTransferFee    bool    `json:"isHaveTransferFee"`
+	TransferFee          float64 `json:"transferFee"`
+	FeeFromAsset         string  `json:"feeFromAsset"`
+	FeeFromAssetCategory string  `json:"feeFromAssetCategory"`
+	Debtor               string  `json:"debtor"`
+	Creditor             string  `json:"creditor"`
 }

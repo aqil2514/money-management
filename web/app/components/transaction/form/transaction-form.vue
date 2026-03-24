@@ -32,6 +32,11 @@ watch(() => state.categoryId, (newVal, oldVal) => {
     state.subCategoryId = 'no-subcategory'
 })
 
+watch(() => state.type, (newVal, oldVal) => {
+  if (oldVal)
+    state.categoryId = 'no-category'
+})
+
 const submitHandler = async (event: FormSubmitEvent<TransactionSchemaType>) => {
   const rawDate: CalendarDate = event.data.date;
   const rawTime: Time = event.data.time;
@@ -47,7 +52,8 @@ const submitHandler = async (event: FormSubmitEvent<TransactionSchemaType>) => {
   const payload: TransactionRequestPayload = {
     ...event.data,
     date: createdDate.toISOString(),
-    subCategoryId: event.data.subCategoryId === "no-subcategory" ? undefined : event.data.subCategoryId
+    subCategoryId: event.data.subCategoryId === "no-subcategory" ? undefined : event.data.subCategoryId,
+    categoryId: event.data.categoryId === "no-category" ? "" : event.data.categoryId,
   };
 
   try {
@@ -79,8 +85,9 @@ const submitHandler = async (event: FormSubmitEvent<TransactionSchemaType>) => {
     <InputCurrency :name="'nominal'" :label="'Nominal'" v-model="state.nominal" />
 
     <div class="grid grid-cols-2 gap-4">
-      <InputCategory v-model="state.categoryId" field-name="categoryId" />
-      <InputCategory v-model="state.subCategoryId" field-name="subCategoryId" :parent-id="state.categoryId" />
+      <InputCategory v-model="state.categoryId" :transaction-type="state.type" field-name="categoryId" />
+      <InputCategory v-model="state.subCategoryId" :transaction-type="state.type" field-name="subCategoryId"
+        :parent-id="state.categoryId" />
     </div>
 
     <div class="grid gap-4"

@@ -82,7 +82,7 @@ export const defaultTransaction: TransactionSchemaType = {
   time: markRaw(new Time(now.getHours(), now.getMinutes())),
   type: "expense",
   nominal: 0,
-  categoryId: "a06ea59c-510c-4358-b179-ff4a28f58d4a",
+  categoryId: "no-category",
   subCategoryId: "no-subcategory",
   note: "",
   description: "",

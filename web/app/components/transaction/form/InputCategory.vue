@@ -1,28 +1,37 @@
 <script setup lang="ts">
 import { type SelectItem } from '@nuxt/ui';
 import { transactionProviderKey } from '~/types/injectKey'
+import type { TransactionType } from '~/types/transaction';
 
 const model = defineModel<string | undefined | null>()
 const injectedData = inject(transactionProviderKey);
 const props = defineProps<{
   fieldName: "categoryId" | "subCategoryId",
+  transactionType: TransactionType,
   parentId?: string;
 }>()
 const isCategory = props.fieldName === "categoryId"
 
 const items = computed<SelectItem[]>(() => {
   const data = injectedData?.resources.categories.value ?? [];
-  const formatted: SelectItem[] = data.filter((d) => d.parentId === null).map((d) => ({
+  const formatted: SelectItem[] = data.filter((d) => d.parentId === null && d.type === props.transactionType).map((d) => ({
     label: d.name,
     value: d.id
   }))
 
-  return formatted
+  const defaultValue: SelectItem[] = [
+    {
+      value: "no-category",
+      label: "Pilih Kategori"
+    }
+  ]
+
+  return [...defaultValue, ...formatted]
 })
 
 const subItems = computed<SelectItem[]>(() => {
   const data = injectedData?.resources.categories.value ?? [];
-  const formatted: SelectItem[] = data.filter((d) => d.parentId === props.parentId).map((d) => ({
+  const formatted: SelectItem[] = data.filter((d) => d.parentId === null && d.type === props.transactionType).map((d) => ({
     label: d.name,
     value: d.id
   }))

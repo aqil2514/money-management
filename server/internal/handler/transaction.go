@@ -2,43 +2,54 @@ package handler
 
 import (
 	"money-backend/internal/model"
+	"money-backend/internal/service"
 	"money-backend/pkg/database"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func CreateTransaction(c *gin.Context) {
 	var payload model.Transaction
-
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Data tidak sesuai dengan yang diminta",
-			"error":   err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	result := database.DB.Create(&payload)
+	tx := database.DB.Begin()
 
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Gagal menyimpan data ke database",
-			"error":   result.Error.Error(),
-		})
+	// Simpan transaksi
+	if err := tx.Create(&payload).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal simpan transaksi"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Transaksi berhasil dibuat",
-		"data":    payload,
-	})
+	if err := service.ProcessBalance(tx, payload); err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal update saldo", "error": err.Error()})
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal finalisasi transaksi"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Berhasil", "data": payload})
 }
 
 func GetTransactions(c *gin.Context) {
 	var transactions []model.Transaction
 
-	result := database.DB.Order("date desc").Find(&transactions)
+	result := database.DB.Order("date desc").
+		Preload("Category").
+		Preload("SubCategory").
+		Preload("AssetFrom").
+		Preload("AssetTo").
+		Preload("FeeFromAsset").
+		Find(&transactions)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -48,8 +59,49 @@ func GetTransactions(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data":    transactions,
-		"message": "Data transaksi berhasil diambil",
-	})
+	var response []model.TransactionFE
+	for _, t := range transactions {
+		res := model.TransactionFE{
+			ID:                t.ID,
+			Date:              t.Date,
+			CreatedAt:         t.CreatedAt,
+			UpdatedAt:         t.UpdatedAt,
+			Type:              t.Type,
+			Nominal:           t.Nominal,
+			Note:              t.Note,
+			IsHaveTransferFee: t.IsHaveTransferFee,
+			TransferFee:       t.TransferFee,
+		}
+
+		// Mapping Objek ke Nama (String)
+		res.Category = t.Category.Name
+		res.AssetFrom = t.AssetFrom.Name
+		res.AssetFromCategory = t.AssetFrom.Category
+
+		// Handle Pointer/Optional fields agar tidak panic
+		if t.SubCategory.ID != uuid.Nil {
+			res.SubCategory = t.SubCategory.Name
+		}
+		if t.AssetTo != nil {
+			res.AssetTo = t.AssetTo.Name
+			res.AssetToCategory = t.AssetTo.Category
+		}
+		if t.FeeFromAsset != nil {
+			res.FeeFromAsset = t.FeeFromAsset.Name
+			res.FeeFromAssetCategory = t.FeeFromAsset.Category
+		}
+		if t.Description != nil {
+			res.Description = *t.Description
+		}
+		if t.Debtor != nil {
+			res.Debtor = *t.Debtor
+		}
+		if t.Creditor != nil {
+			res.Creditor = *t.Creditor
+		}
+
+		response = append(response, res)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": response, "message": "Data transaksi berhasil diambil"})
 }
