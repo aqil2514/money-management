@@ -6,25 +6,39 @@ export type TransactionType =
   | "receivable";
 
 export interface TransactionDb {
+  // Identitas Utama
+  id: string;
+  type: TransactionType;
+  nominal: number;
+  note: string;
+  description: string;
+  date: string; // ISO String dari Backend
+
+  // Foreign Key IDs (Penting untuk Form Edit)
+  categoryId: string;
+  subCategoryId: string | null;
+  assetFromId: number;
+  assetToId: number | null;
+  feeFromAssetId: number | null;
+
+  // Nama/Label (Untuk Tampilan Detail)
+  category: string;
+  subCategory: string;
   assetFrom: string;
   assetFromCategory: string;
   assetTo: string;
   assetToCategory: string;
-  category: string;
-  createdAt: string;
-  creditor: string;
-  date: string;
-  debtor: string;
-  description: string;
   feeFromAsset: string;
   feeFromAssetCategory: string;
-  id: string;
+
+  // Data Tambahan
   isHaveTransferFee: boolean;
-  nominal: number;
-  note: string;
-  subCategory: string;
   transferFee: number;
-  type: TransactionType;
+  debtor: string;
+  creditor: string;
+
+  // Timestamps
+  createdAt: string;
   updatedAt: string;
 }
 

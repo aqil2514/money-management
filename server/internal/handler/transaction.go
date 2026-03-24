@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func CreateTransaction(c *gin.Context) {
@@ -71,25 +70,47 @@ func GetTransactions(c *gin.Context) {
 			Note:              t.Note,
 			IsHaveTransferFee: t.IsHaveTransferFee,
 			TransferFee:       t.TransferFee,
+
+			// Sekarang aman: uuid.UUID ke uuid.UUID
+			CategoryID:    t.CategoryID,
+			SubCategoryID: t.SubCategoryID,
+
+			// uint ke uint
+			AssetFromID:    t.AssetFromID,
+			AssetToID:      t.AssetToID,
+			FeeFromAssetID: t.FeeFromAssetID,
 		}
 
-		// Mapping Objek ke Nama (String)
+		// Mapping Nama untuk Display
 		res.Category = t.Category.Name
 		res.AssetFrom = t.AssetFrom.Name
 		res.AssetFromCategory = t.AssetFrom.Category
 
-		// Handle Pointer/Optional fields agar tidak panic
-		if t.SubCategory.ID != uuid.Nil {
+		// Handle Optional SubCategory
+		if t.SubCategoryID != nil {
+			res.SubCategoryID = t.SubCategoryID
 			res.SubCategory = t.SubCategory.Name
 		}
-		if t.AssetTo != nil {
-			res.AssetTo = t.AssetTo.Name
-			res.AssetToCategory = t.AssetTo.Category
+
+		// Handle Optional AssetTo (Transfer)
+		if t.AssetToID != nil {
+			res.AssetToID = t.AssetToID
+			if t.AssetTo != nil {
+				res.AssetTo = t.AssetTo.Name
+				res.AssetToCategory = t.AssetTo.Category
+			}
 		}
-		if t.FeeFromAsset != nil {
-			res.FeeFromAsset = t.FeeFromAsset.Name
-			res.FeeFromAssetCategory = t.FeeFromAsset.Category
+
+		// Handle Optional FeeFromAsset
+		if t.FeeFromAssetID != nil {
+			res.FeeFromAssetID = t.FeeFromAssetID
+			if t.FeeFromAsset != nil {
+				res.FeeFromAsset = t.FeeFromAsset.Name
+				res.FeeFromAssetCategory = t.FeeFromAsset.Category
+			}
 		}
+
+		// Handle Pointers ke String (Description, Debtor, Creditor)
 		if t.Description != nil {
 			res.Description = *t.Description
 		}
@@ -103,5 +124,8 @@ func GetTransactions(c *gin.Context) {
 		response = append(response, res)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": response, "message": "Data transaksi berhasil diambil"})
+	c.JSON(http.StatusOK, gin.H{
+		"data":    response,
+		"message": "Data transaksi berhasil diambil",
+	})
 }

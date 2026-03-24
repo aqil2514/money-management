@@ -24,6 +24,13 @@ const state = reactive({
   ...defaultTransaction,
   time: new Time(now.getHours(), now.getMinutes()),
 }) as TransactionSchemaType;
+
+watchEffect(() => {
+  if (props.defaultValues) {
+    Object.assign(state, props.defaultValues);
+  }
+});
+
 const isLoading = ref(false)
 const toast = useToast()
 

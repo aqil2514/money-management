@@ -64,19 +64,31 @@ type TransactionFE struct {
 	Note        string    `json:"note"`
 	Description string    `json:"description"`
 
-	// Mapping Relasi ke String (Nama)
-	Category          string `json:"category"`
-	SubCategory       string `json:"subCategory"`
-	AssetFrom         string `json:"assetFrom"`
-	AssetFromCategory string `json:"assetFromCategory"`
-	AssetTo           string `json:"assetTo"`
-	AssetToCategory   string `json:"assetToCategory"`
+	// Mapping Relasi ke Nama (Display)
+	Category             string `json:"category"`
+	SubCategory          string `json:"subCategory"`
+	AssetFrom            string `json:"assetFrom"`
+	AssetFromCategory    string `json:"assetFromCategory"`
+	AssetTo              string `json:"assetTo"`
+	AssetToCategory      string `json:"assetToCategory"`
+	FeeFromAsset         string `json:"feeFromAsset"`
+	FeeFromAssetCategory string `json:"feeFromAssetCategory"`
+
+	// --- PERBAIKAN DI SINI ---
+	// CategoryID harus uuid.UUID sesuai model Transaction
+	CategoryID uuid.UUID `json:"categoryId"`
+
+	// SubCategoryID gunakan pointer uuid.UUID agar bisa null
+	SubCategoryID *uuid.UUID `json:"subCategoryId"`
+
+	// Asset tetap uint karena di model Transaction memakai uint
+	AssetFromID    uint  `json:"assetFromId"`
+	AssetToID      *uint `json:"assetToId"`
+	FeeFromAssetID *uint `json:"feeFromAssetId"`
 
 	// Field Tambahan
-	IsHaveTransferFee    bool    `json:"isHaveTransferFee"`
-	TransferFee          float64 `json:"transferFee"`
-	FeeFromAsset         string  `json:"feeFromAsset"`
-	FeeFromAssetCategory string  `json:"feeFromAssetCategory"`
-	Debtor               string  `json:"debtor"`
-	Creditor             string  `json:"creditor"`
+	IsHaveTransferFee bool    `json:"isHaveTransferFee"`
+	TransferFee       float64 `json:"transferFee"`
+	Debtor            string  `json:"debtor"`
+	Creditor          string  `json:"creditor"`
 }

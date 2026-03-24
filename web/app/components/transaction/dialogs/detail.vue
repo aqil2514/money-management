@@ -73,7 +73,7 @@ const getTypeColor = (type: string) => {
               <UIcon name="i-heroicons-tag" class="text-primary" />
               <span class="text-sm">{{ internalData.category }}</span>
               <span v-if="internalData.subCategory" class="text-xs text-gray-400">/ {{ internalData.subCategory
-              }}</span>
+                }}</span>
             </div>
           </div>
 
@@ -132,7 +132,8 @@ const getTypeColor = (type: string) => {
     <template #footer>
       <div class="flex justify-end gap-2">
         <UButton color="neutral" variant="ghost" label="Tutup" @click="open = false" />
-        <UButton color="primary" icon="i-heroicons-pencil-square" label="Edit Transaksi" />
+        <UButton color="primary" icon="i-heroicons-pencil-square"
+          @click="injectedData?.modal.updateModalOpen('edit', internalData?.id)" label="Edit Transaksi" />
       </div>
     </template>
   </UModal>
