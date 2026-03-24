@@ -8,7 +8,7 @@ const toast = useToast()
 
 const transactionId = computed(() => injectedData?.modal.transactionId.value)
 const selectedData = computed(() =>
-  injectedData?.fetcher.data.value?.data.find((d) => d.id === transactionId.value)
+  injectedData?.fetcher.data.value?.data?.find((d) => d.id === transactionId.value)
 )
 const internalData = ref<TransactionDb | null>(null)
 

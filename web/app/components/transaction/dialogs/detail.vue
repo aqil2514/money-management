@@ -4,7 +4,7 @@ import type { TransactionDb } from '~/types/transaction';
 
 const injectedData = inject(transactionProviderKey)
 const transactionId = computed(() => injectedData?.modal.transactionId.value)
-const selectedData = computed(() => injectedData?.fetcher.data.value?.data.find((d) => d.id === transactionId.value))
+const selectedData = computed(() => injectedData?.fetcher.data.value?.data?.find((d) => d.id === transactionId.value))
 const internalData = ref<TransactionDb | null>(null)
 
 const open = computed({
@@ -76,7 +76,7 @@ const getTypeColor = (type: string) => {
               <UIcon name="i-heroicons-tag" class="text-primary" />
               <span class="text-sm">{{ internalData.category }}</span>
               <span v-if="internalData.subCategory" class="text-xs text-gray-400">/ {{ internalData.subCategory
-              }}</span>
+                }}</span>
             </div>
           </div>
 
