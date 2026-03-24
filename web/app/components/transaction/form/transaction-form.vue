@@ -43,7 +43,7 @@ const submitHandler = async (event: FormSubmitEvent<TransactionSchemaType>) => {
 
   const createdDate = new Date(
     rawDate.year,
-    rawDate.month,
+    rawDate.month - 1,
     rawDate.day,
     rawTime.hour,
     rawTime.minute,

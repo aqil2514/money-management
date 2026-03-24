@@ -59,7 +59,7 @@ const items = computed(() => {
   <div v-if="status === 'pending'">
     <p>Loading...</p>
   </div>
-  <UAccordion v-else :items="items" :ui="{
+  <UAccordion v-else :items="items" type="multiple" :ui="{
     root: 'space-y-4 mt-4',
     header: 'bg-white px-4 cursor-pointer flex ',
     content: 'bg-white p-4',
