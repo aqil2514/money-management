@@ -18,9 +18,10 @@ const (
 )
 
 type Transaction struct {
-	ID        uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID        uuid.UUID      `gorm:"type:uuid;primaryKey" json:"id"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
 	Date    time.Time `json:"date" validate:"required"`
 	Type    string    `json:"type" validate:"required,oneof=expense income transfer payable receivable"`

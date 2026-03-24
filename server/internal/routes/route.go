@@ -13,6 +13,7 @@ func SetupRoute(r *gin.Engine) {
 	transactionGroup.POST("", handler.CreateTransaction)
 	transactionGroup.GET("", handler.GetTransactions)
 	transactionGroup.PUT("/:id", handler.EditTransaction)
+	transactionGroup.DELETE("/:id", handler.SoftDeleteTransaction)
 
 	categoryGroup := api.Group("/category")
 	categoryGroup.GET("", handler.GetCategory)

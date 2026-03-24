@@ -133,7 +133,11 @@ const getTypeColor = (type: string) => {
     </template>
 
     <template #footer>
-      <div class="flex justify-end gap-2">
+      <UButton icon="i-lucide-trash" color="error"
+        @click="injectedData?.modal.updateModalOpen('delete', internalData?.id)">
+        Hapus
+      </UButton>
+      <div class="flex justify-end gap-2 w-full">
         <UButton color="neutral" variant="ghost" label="Tutup" @click="open = false" />
         <UButton color="primary" icon="i-heroicons-pencil-square"
           @click="injectedData?.modal.updateModalOpen('edit', internalData?.id)" label="Edit Transaksi" />

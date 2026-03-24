@@ -39,6 +39,48 @@ func CreateTransaction(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Berhasil", "data": payload})
 }
 
+func SoftDeleteTransaction(c *gin.Context) {
+	id := c.Param("id")
+
+	tx := database.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// 1. Ambil data asli (untuk keperluan Undo Balance)
+	var transaction model.Transaction
+	if err := tx.Where("id = ?", id).First(&transaction).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusNotFound, gin.H{"message": "Transaksi tidak ditemukan", "id": id, "error": err.Error()})
+		return
+	}
+
+	// 2. Undo Saldo (PENTING: Saldo harus kembali ke posisi semula
+	// meskipun datanya hanya di-soft delete)
+	if err := service.UndoBalance(tx, transaction); err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal update saldo", "error": err.Error()})
+		return
+	}
+
+	// 3. GORM Soft Delete
+	// Ini hanya akan mengisi kolom deleted_at
+	if err := tx.Delete(&transaction).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal menghapus transaksi"})
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal finalisasi"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Transaksi berhasil dipindahkan ke tempat sampah (Soft Delete)"})
+}
+
 func EditTransaction(c *gin.Context) {
 	var payload model.Transaction
 	if err := c.ShouldBindJSON(&payload); err != nil {
