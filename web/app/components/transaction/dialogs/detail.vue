@@ -59,7 +59,9 @@ const getTypeColor = (type: string) => {
               internalData.type === 'income' ? 'text-green-600' : 'text-red-600'
             ]">
               {{ internalData.type === 'income' ? '+' : '-' }}
-              {{ new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(internalData.nominal) }}
+              {{ new Intl.NumberFormat('id-ID', {
+                style: 'currency', currency: 'IDR', maximumFractionDigits: 0
+              }).format(internalData.nominal) }}
             </h3>
           </div>
           <UBadge :color="getTypeColor(internalData.type)" variant="subtle" class="capitalize">
@@ -87,7 +89,7 @@ const getTypeColor = (type: string) => {
           </div>
         </div>
 
-        <UDivider />
+        <USeparator />
 
         <div class="space-y-3">
           <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Aliran Dana</p>

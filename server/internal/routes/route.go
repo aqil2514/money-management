@@ -12,6 +12,7 @@ func SetupRoute(r *gin.Engine) {
 	transactionGroup := api.Group("/transactions")
 	transactionGroup.POST("", handler.CreateTransaction)
 	transactionGroup.GET("", handler.GetTransactions)
+	transactionGroup.PUT("/:id", handler.EditTransaction)
 
 	categoryGroup := api.Group("/category")
 	categoryGroup.GET("", handler.GetCategory)

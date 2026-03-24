@@ -12,6 +12,7 @@ import InputCurrency from "./InputCurrency.vue";
 import InputAsset from "./InputAsset.vue";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { CalendarDate, Time } from "@internationalized/date";
+import { transactionProviderKey } from "~/types/injectKey";
 
 const props = defineProps<{
   onSubmit: (values: TransactionRequestPayload) => Promise<void> | void
@@ -33,6 +34,7 @@ watchEffect(() => {
 
 const isLoading = ref(false)
 const toast = useToast()
+const injectedData = inject(transactionProviderKey)
 
 watch(() => state.categoryId, (newVal, oldVal) => {
   if (oldVal)
@@ -61,6 +63,7 @@ const submitHandler = async (event: FormSubmitEvent<TransactionSchemaType>) => {
     date: createdDate.toISOString(),
     subCategoryId: event.data.subCategoryId === "no-subcategory" ? undefined : event.data.subCategoryId,
     categoryId: event.data.categoryId === "no-category" ? "" : event.data.categoryId,
+    id: props.defaultValues ? injectedData?.modal.transactionId.value ?? undefined : undefined
   };
 
   try {

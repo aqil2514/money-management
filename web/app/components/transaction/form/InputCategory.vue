@@ -14,7 +14,7 @@ const isCategory = props.fieldName === "categoryId"
 
 const items = computed<SelectItem[]>(() => {
   const data = injectedData?.resources.categories.value ?? [];
-  const formatted: SelectItem[] = data.filter((d) => d.parentId === null && d.type === props.transactionType).map((d) => ({
+  const formatted: SelectItem[] = data.filter((d) => !d.parentId && d.type === props.transactionType).map((d) => ({
     label: d.name,
     value: d.id
   }))
@@ -31,7 +31,7 @@ const items = computed<SelectItem[]>(() => {
 
 const subItems = computed<SelectItem[]>(() => {
   const data = injectedData?.resources.categories.value ?? [];
-  const formatted: SelectItem[] = data.filter((d) => d.parentId === null && d.type === props.transactionType).map((d) => ({
+  const formatted: SelectItem[] = data.filter((d) => d.parentId === props.parentId).map((d) => ({
     label: d.name,
     value: d.id
   }))

@@ -70,6 +70,7 @@ export const transactionSchema = schema.superRefine((value, ctx) => {
 export type TransactionSchemaType = z.output<typeof schema>;
 export type TransactionRequestPayload = Omit<TransactionSchemaType, "date"> & {
   date: string;
+  id?: string; //Buat edit
 };
 export type TransactionSchemaTypeKey = keyof TransactionSchemaType;
 

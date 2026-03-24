@@ -27,19 +27,17 @@ const open = computed({
 })
 
 const editHandler = async (values: TransactionRequestPayload) => {
-  // await $fetch(`${serverUrl}/transactions`, {
-  //   method: "POST",
-  //   body: values
-  // })
-
-  console.log(values)
+  const res = await $fetch(`${serverUrl}/transactions/${injectedData?.modal.transactionId.value}`, {
+    method: "PUT",
+    body: values
+  })
 
   toast.add({
     title: "Berhasil",
     description: "Data transaksi berhasil diedit"
   })
-  // injectedData?.modal.updateModalOpen(null);
-  // await refreshNuxtData("transaction")
+  injectedData?.modal.updateModalOpen(null);
+  await refreshNuxtData("transaction")
 }
 
 const defaultValues = computed<TransactionSchemaType | undefined>(() => {

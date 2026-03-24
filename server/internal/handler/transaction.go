@@ -39,6 +39,54 @@ func CreateTransaction(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Berhasil", "data": payload})
 }
 
+func EditTransaction(c *gin.Context) {
+	var payload model.Transaction
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	tx := database.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	var oldTransaction model.Transaction
+	if err := tx.First(&oldTransaction, payload.ID).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusNotFound, gin.H{"message": "Transaksi tidak ditemukan"})
+		return
+	}
+
+	if err := service.UndoBalance(tx, oldTransaction); err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal reset saldo lama"})
+		return
+	}
+
+	if err := tx.Model(&model.Transaction{}).Where("id = ?", payload.ID).Updates(&payload).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal simpan transaksi", "error": err.Error()})
+		return
+	}
+
+	if err := service.ProcessBalance(tx, payload); err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal update saldo", "error": err.Error()})
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal finalisasi transaksi"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Berhasil", "data": payload})
+}
+
 func GetTransactions(c *gin.Context) {
 	var transactions []model.Transaction
 
