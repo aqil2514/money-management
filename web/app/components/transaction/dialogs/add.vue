@@ -31,7 +31,7 @@ const addHandler = async (values: TransactionRequestPayload) => {
 </script>
 
 <template>
-  <UButton class="cursor-pointer mt-4" @click="open = true">
+  <UButton size="md" class="cursor-pointer mt-4" @click="open = true">
     Tambah
   </UButton>
 
